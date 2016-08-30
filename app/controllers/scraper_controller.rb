@@ -39,12 +39,27 @@ class ScraperController < ApplicationController
       post_page = agent.get("http://www.bigtent.com" + link.value)
       comments = post_page.parser.xpath("//ul[@class='message_list']/li[@class='comments']/ul[@class='comments_list']/li")
       comments.each do |comment|
-        debugger
-        puts comment.value
-        debugger
+
         username_href = comment.xpath("div[@class='message_id']/p[@class='username']/a/@href").first.value
         username_temp = username_href.chomp("?trackback")
+        #userid
         userid = username_temp[9..username_temp.length]
+
+        #date
+        date = comment.xpath("div[@class='message_id']/p[@class='date']").text
+
+        #message
+        message = comment.xpath("div[@class='message']/p[2]").text
+        pattern = /(Dr.|Dr|dr|dr.)[^children]\s*(\w+)(.|\s*)(\w*)/
+
+
+        match_obj = pattern.match message  #<MatchData "Word">
+
+        if (match_obj != nil)
+          dr_name = match_obj[2] + " " + match_obj[3] + " " + match_obj[4]
+
+        end
+
 
 
       end
