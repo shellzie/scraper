@@ -57,7 +57,6 @@ class ScraperController < ApplicationController
 
         if (match_obj != nil)
           dr_name = match_obj[2] + " " + match_obj[3] + " " + match_obj[4]
-          debugger
           reco = Recommendation.create(userid: userid, post_date: date, doctor_name: dr_name)
         end
       end
