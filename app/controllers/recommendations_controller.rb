@@ -1,22 +1,27 @@
 require 'date'
 class RecommendationsController < ApplicationController
 
+  @@extra_words = ['at', 'is', 'there', 'in', 'for', 'actually', 'as', 'by', 'any', 'affectionately', 'gives', 'until',
+    'more']
+  @@dr_prefixes = ['Dr.', 'Dr', 'dr.', 'dr']
+
   def new
     @recommendation = Recommendation.new
   end
 
-  # def create
-  #   Rails.logger.debug "+++++++ IN CREATE ++++++++++++++++++++++"
-  #   # @existing_rec = Recommendation.find_by(params[:recommendation])
-  #
-  #   # if @existing_rec == nil
-  #   @recommendation = Recommendation.new(recommendation_params)
-  #   @recommendation.save
-  #   # else
-  #   #   Rails.logger.debug "+++++++++++++++++in ELSE"
-  #   #   Rails.logger.info(@recommendation.errors.inspect)
-  #   # end
-  # end
+  def create
+    Rails.logger.debug "+++++++ IN CREATE ++++++++++++++++++++++"
+    debugger
+    @existing_rec = Recommendation.find_by(params[:recommendation])
+
+    if (@existing_rec.nil? || @existing_rec == "")
+      @recommendation = Recommendation.new(recommendation_params)
+      @recommendation.save
+    else
+      Rails.logger.debug "+++++++++++++++++in ELSE"
+      Rails.logger.info(@recommendation.errors.inspect)
+    end
+  end
 
   def show
     # doc = Nokogiri::HTML(open("http://www.bigtent.com/"))
@@ -80,25 +85,37 @@ class RecommendationsController < ApplicationController
         message_node = comment.xpath("div[@class='message']/p").first.next
         combined_msg = ""
         while (message_node != nil)
-          combined_msg += message_node.text
+          combined_msg += message_node.text + " "
           message_node = message_node.next
         end
 
-        pattern = /(Dr.|Dr|dr|dr.)\s+(\w*)\s*(\w*)\s*(\w*)/
+        pattern = /(Dr.|Dr|dr|dr.)\s+(\w*)\C*(\w*)\s*(\w*)/
         matches = combined_msg.scan(pattern)
 
         #dr name
         matches.each do |match|
           if (match != nil && match[0] != "dren's") # throw out "children's" string
-            if (match[3] == "and" && match[4].present?) #2 doctors
-              dr_name = match[1] + " " + match[2] + " " + match[4]
-            elsif match[3] == "at" || match[3] == "is"
+
+            if (match[2] == "and" && match[3].present?) #2 doctors and only last names used. ie "Dr. Kam and Gutierrez"
+              dr_name = match[1] + " " + match[3]
+            elsif ((match[2].in?(["and", "or"])) && match[3].present? && match[3].in?(@@dr_prefixes))  #2 doctors and they repeated "Dr" before each last name. ie "Dr. Berger and Dr. Bruno"
+              dr_name = match[1] + " " + match[4]
+            elsif match[3].in?(@@extra_words)  # includes a "throw away" word (first AND last name)
+              dr_name = match[1] + " " + match[2]
+            elsif match[2].in?(@@extra_words) # includes a "throw away" word (first OR last name)
               dr_name = match[1]
             else
               dr_name = match[1] + " " + match[2]
             end
-            @recommendation = Recommendation.new(user_id: userid, post_date: dt, doctor_name: dr_name, topic_id: topicid)
-            @recommendation.save
+
+            query_result = Recommendation.find_by user_id: userid, post_date: dt, doctor_name: dr_name, topic_id: topicid
+
+            if query_result.nil?
+              Rails.logger.debug "+++++++++++++++ no record found. doing an insert++++++++++++"
+              Recommendation.create(user_id: userid, post_date: dt, doctor_name: dr_name, topic_id: topicid)
+            else
+              Rails.logger.debug "+++++++++++++++ record found. SKIPPING insert++++++++++++"
+            end
           end
         end
       end
