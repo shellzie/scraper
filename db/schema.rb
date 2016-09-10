@@ -11,17 +11,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160831185338) do
+ActiveRecord::Schema.define(version: 20160831223313) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "recommendations", force: :cascade do |t|
-    t.integer  "userid"
+    t.integer  "user_id"
     t.datetime "post_date"
     t.string   "doctor_name"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "topic_id"
   end
 
 end
