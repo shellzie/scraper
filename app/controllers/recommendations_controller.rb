@@ -75,22 +75,27 @@ class RecommendationsController < ApplicationController
         dateObj = Date.new(year, month, day)
         dt = dateObj.strftime('%Y-%m-%d')
 
-        # expected_format = year + "-" + month + "-" + day
-        # dt = Date.parse(expected_format)
+        #didn't find a way to traverse cleanly because no root node is available. will have to iterate over until node is nil?
+        #skip over first <p> because it's always empty
+        message_node = comment.xpath("div[@class='message']/p").first.next
+        combined_msg = ""
+        while (message_node != nil)
+          combined_msg += message_node.text
+          message_node = message_node.next
+        end
 
-        #message
-        message = comment.xpath("div[@class='message']/p[2]").text
         pattern = /(Dr.|Dr|dr|dr.)\s+(\w*)\s*(\w*)\s*(\w*)/
-        matches = message.scan(pattern)
+        matches = combined_msg.scan(pattern)
 
+        #dr name
         matches.each do |match|
           if (match != nil && match[0] != "dren's") # throw out "children's" string
-            if (match[4] == "and" && match[5].present?) #2 doctors
-              dr_name = match[2] + " " + match[3] + " " + match[5]
-            elsif match[4] == "at" || match[4] == "is"
-              dr_name = match[2]
+            if (match[3] == "and" && match[4].present?) #2 doctors
+              dr_name = match[1] + " " + match[2] + " " + match[4]
+            elsif match[3] == "at" || match[3] == "is"
+              dr_name = match[1]
             else
-              dr_name = match[2] + " " + match[3]
+              dr_name = match[1] + " " + match[2]
             end
             @recommendation = Recommendation.new(user_id: userid, post_date: dt, doctor_name: dr_name, topic_id: topicid)
             @recommendation.save
