@@ -1,5 +1,5 @@
 class Recommendation < ActiveRecord::Base
-  validates :user_id, presence: true, numericality: {only_integer: true}
+  validates :user_id, presence: false, numericality: {only_integer: true}
   validates :doctor_name, presence: true, length: { maximum: 100 }
   validates :topic_id, presence: true, numericality: {only_integer: true}
   validates :created_at, presence: false
