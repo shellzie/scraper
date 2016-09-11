@@ -2,7 +2,13 @@ require 'date'
 class RecommendationsController < ApplicationController
 
   @@extra_words = ['at', 'is', 'there', 'in', 'for', 'actually', 'as', 'by', 'any', 'affectionately', 'gives', 'until',
-    'more', 'or', 'and', 'www', 'F4', 'a', 'the', 'are', 'never']
+    'more', 'or', 'and', 'www', 'F4', 'a', 'the', 'are', 'never', 'with', 'it', 'came', 'but', 'really', 'too', 'was',
+    'does', 'that', 'of', 'over', 'saw', 'either', 'before', 'has', 'since', 'reminded', 'will', 'said', 'ok', 'we',
+    'diagnosed', 'would', 'than', 'rec', 'also', 'based', 'called', 'during', 'head', 'once', 'really', 'simply', 'so',
+    'took', 'vs', 'when', 'with', 'who', 'to', 'etc', 'told', 'today', 'Seems', 'because', 'walks', 'returned', 'will',
+    'spends', 'out', 'site', 'Sears\' book', 'Sears\' The', 'doesn', 'off', 'speak', 'we', 'from']
+
+
   @@dr_prefixes = ['Dr.', 'Dr', 'dr.', 'dr']
 
   def new
@@ -119,7 +125,7 @@ class RecommendationsController < ApplicationController
           end
 
           #                0               1       2
-          pattern = /(Dr|Dr.|dr|dr.)\s+(\w*'*)\s*(\w*)/
+          pattern = /(Dr|Dr.|dr|dr.)\s+(\w*'*)\s*(\w*'*)/
 
           removeInvalid = combined_msg.scrub()
 
