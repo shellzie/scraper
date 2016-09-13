@@ -39,6 +39,10 @@ gem 'validates_date_time'
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug'
+  gem 'capybara'
+  gem 'rspec-rails'
+  gem 'webmock'
+  gem 'vcr'
 end
 
 group :development do

@@ -15,7 +15,6 @@ class RecommendationsController < ApplicationController
   end
 
   def create
-    debugger
     @existing_rec = Recommendation.find_by(params[:recommendation])
     if (@existing_rec.nil? || @existing_rec == "")
       @recommendation = Recommendation.new(recommendation_params)
@@ -71,6 +70,7 @@ class RecommendationsController < ApplicationController
       end
 
       scrape_page(page, agent, regionid) #scrape the last page
+      agent.shutdown #avoids the "too many connection reset" error
     end
 
 
