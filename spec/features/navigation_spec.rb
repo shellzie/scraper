@@ -6,7 +6,7 @@ require 'vcr'
 describe 'User logs in' do
   it 'with valid email and password' do
 
-    VCR.use_cassette('whatever cassette name you want', :record => :new_episodes) do
+    VCR.use_cassette('BigTentScraper', :record => :once) do
        response = Net::HTTP.get_response('www.bigtent.com', '/')
         puts "Response: #{response.body}"
     end
