@@ -85,7 +85,6 @@ describe "Create place scenario" do
 
       comment_details.each do |comment_count| #starts at 4th row and skips yellow rows
         if (comment_count.text.to_i > 0)
-          byebug
           @topic_url = browser.as(:css, '.forum_message .forum_topic p a')[4 + index].href
           @topic_title = browser.as(:css, '.forum_message .forum_topic p a')[4 + index].text
           break
@@ -100,8 +99,16 @@ describe "Create place scenario" do
       browser.a(:text => @topic_title).click
       expect(browser.title).to eq('bigtent/forum/message')
 
-      # INDIVIDUAL TOOPIC PAGE - CHECK STRUCTURE
+      # INDIVIDUAL TOPIC PAGE - CHECK STRUCTURE
+      topic = session.first(:xpath, "//ul[@class='message_list']/li[@class='comments']/ul[@class='comments_list']/li/div[@class='flag_container']",
+                            visible: false)[:id]
+      check_presence(topic)
 
+      date = session.first(:xpath, "//div[@class='message_id']/p[@class='date']").text
+      check_presence(date)
+
+      message = session.first(:xpath, "//div[@class='message']/p")
+      check_presence(message)
 
     end
 

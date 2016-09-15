@@ -79,7 +79,7 @@ class RecommendationsController < ApplicationController
         post_page = agent.get("http://www.bigtent.com" + link.value)
 
         #topicid
-        topic_info = post_page.parser.xpath("//ul[@class='message_list']/li[1]/div[@class='flag_container']/@id").first.value
+        topic_info = post_page.parser.xpath("//ul[@class='message_list']/li[@class='comments']/div[@class='flag_container']/@id").first.value
         topicid = topic_info[15..topic_info.length]
 
         comments = post_page.parser.xpath("//ul[@class='message_list']/li[@class='comments']/ul[@class='comments_list']/li")
