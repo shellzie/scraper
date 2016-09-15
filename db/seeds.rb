@@ -1,2 +1,1 @@
-
-# Region.create(name: 'Highlands', description: 'North West Denver') 
+Region.create(name: 'Highlands', description: 'North West Denver')

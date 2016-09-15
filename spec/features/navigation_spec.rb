@@ -100,8 +100,11 @@ describe "Create place scenario" do
       expect(browser.title).to eq('bigtent/forum/message')
 
       # INDIVIDUAL TOPIC PAGE - CHECK STRUCTURE
+      userid = session.first(:xpath, "//div[@class='message_id']/p[@class='username']/a")[:href]
+      check_presence(userid)
+
       topic = session.first(:xpath, "//ul[@class='message_list']/li[@class='comments']/ul[@class='comments_list']/li/div[@class='flag_container']",
-                            visible: false)[:id]
+                    visible: false)[:id]
       check_presence(topic)
 
       date = session.first(:xpath, "//div[@class='message_id']/p[@class='date']").text

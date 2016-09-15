@@ -79,7 +79,8 @@ class RecommendationsController < ApplicationController
         post_page = agent.get("http://www.bigtent.com" + link.value)
 
         #topicid
-        topic_info = post_page.parser.xpath("//ul[@class='message_list']/li[@class='comments']/div[@class='flag_container']/@id").first.value
+        topic_info = post_page.parser.xpath("//div[@class='flag_container']/@id").first.value
+        # topic_info = post_page.parser.xpath("//ul[@class='message_list']/li[@class='comments']/div[@class='flag_container']/@id").first.value
         topicid = topic_info[15..topic_info.length]
 
         comments = post_page.parser.xpath("//ul[@class='message_list']/li[@class='comments']/ul[@class='comments_list']/li")
@@ -125,6 +126,8 @@ class RecommendationsController < ApplicationController
       end
     end
 
+  private
+
     def format_date(raw_date)
       date_elts = raw_date.split("/")
       year = date_elts[2].to_i
@@ -134,7 +137,6 @@ class RecommendationsController < ApplicationController
       dt = dateObj.strftime('%Y-%m-%d')
       return dt
     end
-
 
     def find_dr_name_matches(message)
       #                0               1       2
