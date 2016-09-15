@@ -7,15 +7,17 @@ require 'spec_helper'
 describe "Create place scenario" do
   context "Go to home page" do
 
+    #Node: need both capybara AND Watir or session AND browser throughout the tests. 1 for DOM tranversal, the other for
+    #checking HTML structure.
     let(:browser) { @browser ||= Watir::Browser.new :firefox }   #for user interaction like clicking around and doing page navigation
-    before { browser.goto "http://www.bigtent.com/log_in" }
+    let(:session) { @session = Capybara::Session.new :selenium }
     after { browser.close }
 
     it "opens homepage" do
 
       #LOGIN PAGE - CHECK STRUCTURE
 
-      session = Capybara::Session.new :selenium # instantiate new session object (for inspecting it's layout)
+      # session = Capybara::Session.new :selenium # instantiate new session object (for inspecting it's layout)
       session.visit('http://www.bigtent.com/log_in')
       username = session.find(:xpath, "//form[@name='form_index_login']//li[@class='group']//input[@name='index_login[user_name]']")
       expect(username).to_not be_nil
@@ -26,6 +28,7 @@ describe "Create place scenario" do
 
       #NAVIGATE TO LANDING PAGE
 
+      browser.goto "http://www.bigtent.com/log_in"
       browser.text_field(name: 'index_login[user_name]').set("fam@2d12.net")
       browser.text_field(name: 'index_login[password]').set("bigtent567")
       browser.a(:text => "Log in").click
@@ -56,30 +59,54 @@ describe "Create place scenario" do
       session.find_link('Discussions').click
 
       # POSTS PAGE - CHECK STRUCTURE
+      search_box = session.find(:xpath, "//form[@name='form_forum_filter_basic']//input[@name='forum_filter_basic[q]']")
+      expect(search_box).to_not be_nil
+
+      # NAVIGATE TO PRESCHOOL POSTS PAGE
+
+      browser.text_field(name: 'forum_filter_basic[q]').set('preschool')
+      browser.button(class: 'search_icon').click
+      browser.strong(text: 'preschool').wait_until_present
+
+      session.fill_in('forum_filter_basic[q]', :with => 'preschool')
+      session.find_button('forum_filter_basic_submit_button_0').click
+
+      # PRESCHOOL POSTS PAGE - CHECK STRUCTURE
+      # next link
+      next_link = session.find(:xpath, "//div[@class='forum_footer']/ul[@class='pagination']/li/a[@class='next']")
+      check_presence(next_link)
+
+      #find first post url that has at least 1 comment
+      index = 0
+
+      all_comment_counts = browser.tds(:class, 'forum_comments').to_a
+      comment_details = all_comment_counts.slice(4, all_comment_counts.length)
 
 
+      comment_details.each do |comment_count| #starts at 4th row and skips yellow rows
+        if (comment_count.text.to_i > 0)
+          byebug
+          @topic_url = browser.as(:css, '.forum_message .forum_topic p a')[4 + index].href
+          @topic_title = browser.as(:css, '.forum_message .forum_topic p a')[4 + index].text
+          break
+        else
+          index += 1
+        end
+      end
+      check_presence(@topic_url)
+
+      # NAVIGATE TO INDIVIDUAL TOPIC PAGE
+      session.visit(@topic_url)
+      browser.a(:text => @topic_title).click
+      expect(browser.title).to eq('bigtent/forum/message')
+
+      # INDIVIDUAL TOOPIC PAGE - CHECK STRUCTURE
 
 
+    end
 
-
-
-      # NAVIGATE TO POSTS PAGE
-
-
-      # session.driver.quit
-
-      # fill_in 'index_login_user_name', :with => 'fam@2d12.net'
-      # fill_in 'index_login_password', :with => 'bigtent567'
-      # click_button 'submit_button'
-      # session.visit('http://www.bigtent.com/group')
-
-      #type in 'pets' as sample string in search box
-      # browser.a(href: '/group/forum?reset', text: 'Discussions').click
-      # browser.text_field(name: 'forum_filter_basic[q]').set("preschool")
-      # browser.button(class: 'search_icon').click
-      #
-      # verify the resulting list of posts are in expected format
-      # browser.strong(text: 'preschool').wait_until_present
+    def check_presence(elt)
+      expect(elt).to_not be_nil
 
     end
   end

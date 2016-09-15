@@ -52,8 +52,8 @@ class RecommendationsController < ApplicationController
       #arrive at discussion page
 
       #type 'pediatrician' in search box
-      search_form = page.form('form_forum_filter')
-      search_form['forum_filter[q]'] = 'pediatrician'
+      search_form = page.form('form_forum_filter_basic')
+      search_form['forum_filter_basic[q]'] = 'pediatrician'
       page = agent.submit(search_form)
 
       #region
@@ -72,7 +72,6 @@ class RecommendationsController < ApplicationController
       scrape_page(page, agent, regionid) #scrape the last page
       agent.shutdown #avoids the "too many connection reset" error
     end
-
 
     def scrape_page(page, agent, regionid)
       all_links = page.parser.xpath("//table[@class='forums_index']//tr[@class='forum_message']//a[starts-with(@href, '/group/forum/message/')]/@href")
