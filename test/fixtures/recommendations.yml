@@ -1,11 +1,11 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  userid: 1
+  user_id: 1
   post_date: 2016-08-31 12:53:38
   doctor_name: MyString
 
 two:
-  userid: 1
+  user_id: 1
   post_date: 2016-08-31 12:53:38
   doctor_name: MyString

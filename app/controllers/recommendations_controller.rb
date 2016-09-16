@@ -126,8 +126,6 @@ class RecommendationsController < ApplicationController
       end
     end
 
-  private
-
     def format_date(raw_date)
       date_elts = raw_date.split("/")
       year = date_elts[2].to_i
@@ -148,8 +146,6 @@ class RecommendationsController < ApplicationController
 
     def do_insert(userid, dt, dr_name, topicid, regionid)
       query_result = Recommendation.find_by user_id: userid, post_date: dt, doctor_name: dr_name, topic_id: topicid, region_id: regionid
-      # query_result = Recommendation.where("user_id = " + userid + " AND post_date = " + dt + " AND doctor_name LIKE " + dr_name +
-      #                                         " AND topic_id = " + topicid)
       if query_result.nil?
         Recommendation.create(user_id: userid, post_date: dt, doctor_name: dr_name, topic_id: topicid, region_id: regionid)
       else

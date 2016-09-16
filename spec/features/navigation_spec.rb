@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'RecommendationsController'
 # require 'byebug'
 # require 'watir-webdriver'
 # require 'capybara'
@@ -13,7 +14,7 @@ describe "Create place scenario" do
     let(:session) { @session = Capybara::Session.new :selenium }
     after { browser.close }
 
-    it "opens homepage" do
+    it "tests format of bigtent HTML pages" do
 
       #LOGIN PAGE - CHECK STRUCTURE
 
@@ -112,12 +113,11 @@ describe "Create place scenario" do
 
       message = session.first(:xpath, "//div[@class='message']/p")
       check_presence(message)
-
     end
 
     def check_presence(elt)
       expect(elt).to_not be_nil
-
     end
   end
+
 end
